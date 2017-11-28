@@ -1,5 +1,5 @@
 ## requirements:
-python, opencv-python, keras, tensorflow, h5py.
+python, opencv-python, keras, tensorflow, h5py, numpy, scikit-learn
 
 
 ## step1: 
