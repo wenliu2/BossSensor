@@ -43,7 +43,8 @@ def traverse_dir(path):
         if os.path.isdir(abs_path):  # dir
             traverse_dir(abs_path)
         else:                        # file
-            if file_or_dir.endswith('.jpg'):
+            #if file_or_dir.endswith('.jpg'):
+            if file_or_dir.endswith('.png'):
                 image = read_image(abs_path)
                 images.append(image)
                 labels.append(path)

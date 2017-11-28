@@ -7,9 +7,11 @@ from image_show import show_image
 
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
-    cascade_path = "/usr/local/opt/opencv/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml"
+    #cascade_path = "/usr/local/opt/opencv/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml"
+    cascade_path = "./xml/haarcascade_frontalface_default.xml"
     model = Model()
     model.load()
+    count = 0
     while True:
         _, frame = cap.read()
 
@@ -20,10 +22,10 @@ if __name__ == '__main__':
         cascade = cv2.CascadeClassifier(cascade_path)
 
         # 物体認識（顔認識）の実行
-        facerect = cascade.detectMultiScale(frame_gray, scaleFactor=1.2, minNeighbors=3, minSize=(10, 10))
+        facerect = cascade.detectMultiScale(frame_gray, scaleFactor=1.2, minNeighbors=3, minSize=(100, 100))
         #facerect = cascade.detectMultiScale(frame_gray, scaleFactor=1.01, minNeighbors=3, minSize=(3, 3))
-        if len(facerect) > 0:
-            print('face detected')
+        if len(facerect) == 1:
+            #print('single face detected')
             color = (255, 255, 255)  # 白
             for rect in facerect:
                 # 検出した顔を囲む矩形の作成
@@ -32,18 +34,21 @@ if __name__ == '__main__':
                 x, y = rect[0:2]
                 width, height = rect[2:4]
                 image = frame[y - 10: y + height, x: x + width]
+                #image = frame[y: y + height, x: x + width]
 
                 result = model.predict(image)
                 if result == 0:  # boss
-                    print('Boss is approaching')
-                    show_image()
+                    print('Yes %4d' % (count))
+                    count += 1
+                    #show_image()
                 else:
-                    print('Not boss')
+                    print('No')
 
         #10msecキー入力待ち
-        k = cv2.waitKey(100)
+        k = cv2.waitKey(1000)
+        #print('k = ', k)
         #Escキーを押されたら終了
-        if k == 27:
+        if k == 'q':
             break
 
     #キャプチャを終了

@@ -4,6 +4,7 @@ import random
 
 import numpy as np
 from sklearn.cross_validation import train_test_split
+#from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
@@ -28,6 +29,7 @@ class Dataset(object):
 
     def read(self, img_rows=IMAGE_SIZE, img_cols=IMAGE_SIZE, img_channels=3, nb_classes=2):
         images, labels = extract_data('./data/')
+        print("images size %d" % images.size)
         labels = np.reshape(labels, [-1])
         # numpy.reshape
         X_train, X_test, y_train, y_test = train_test_split(images, labels, test_size=0.3, random_state=random.randint(0, 100))
@@ -151,13 +153,22 @@ class Model(object):
         self.model = load_model(file_path)
 
     def predict(self, image):
+        #print('image.shape:', image.shape)
+        '''
         if image.shape != (1, 3, IMAGE_SIZE, IMAGE_SIZE):
             image = resize_with_pad(image)
             image = image.reshape((1, 3, IMAGE_SIZE, IMAGE_SIZE))
+        '''
+        image = resize_with_pad(image)
+        if K.image_dim_ordering() == 'th':
+            image = image.reshape((1, 3, IMAGE_SIZE, IMAGE_SIZE))
+        else:
+            image = image.reshape((1, IMAGE_SIZE, IMAGE_SIZE, 3))
+
         image = image.astype('float32')
         image /= 255
         result = self.model.predict_proba(image)
-        print(result)
+        #print(result)
         result = self.model.predict_classes(image)
 
         return result[0]
