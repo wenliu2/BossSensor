@@ -153,18 +153,19 @@ class Model(object):
         self.model = load_model(file_path)
 
     def predict(self, image):
+<<<<<<< HEAD
         #print('image.shape:', image.shape)
         '''
         if image.shape != (1, 3, IMAGE_SIZE, IMAGE_SIZE):
             image = resize_with_pad(image)
             image = image.reshape((1, 3, IMAGE_SIZE, IMAGE_SIZE))
         '''
-        image = resize_with_pad(image)
-        if K.image_dim_ordering() == 'th':
+        if K.image_dim_ordering() == 'th' and image.shape != (1, 3, IMAGE_SIZE, IMAGE_SIZE):
+            image = resize_with_pad(image)
             image = image.reshape((1, 3, IMAGE_SIZE, IMAGE_SIZE))
-        else:
+        elif K.image_dim_ordering() == 'tf' and image.shape != (1, IMAGE_SIZE, IMAGE_SIZE, 3):
+            image = resize_with_pad(image)
             image = image.reshape((1, IMAGE_SIZE, IMAGE_SIZE, 3))
-
         image = image.astype('float32')
         image /= 255
         result = self.model.predict_proba(image)
